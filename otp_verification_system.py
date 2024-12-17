@@ -51,9 +51,10 @@ def enter_otp():  #function to prompt the user to enter the otp
 
 """**converting otp to hashcode and verification**"""
 
+import bcrypt  #importing bcrypt library
+
 def hash_otp(otp) -> bytes:  #function to convert otp to hashcode and mailing the code to the user
   !pip install bcrypt  #installing bcrypt library
-  import bcrypt  #importing bcrypt library
   hashed = bcrypt.hashpw(otp.encode('utf-8'), bcrypt.gensalt())  #converting otp to hashcode
   #send_otp()  #calling send_otp
   return hashed  #returning hashcode
