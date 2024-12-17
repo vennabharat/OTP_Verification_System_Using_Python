@@ -32,13 +32,25 @@ def send_otp(np):  #function for sending email to the user
   subject = "OTP Verification"  #email subject
   body = f"Your OTP is {np}" #email body
   message = f"subject:{subject}\n\n{body}"  #encoding subject and body
-  receiver = input('Enter your email address to login:') #input for obtaining user email id
+  #receiver = input('Enter your email address to login:') #input for obtaining user email id
+  receiver = verify_email() #calling verify_email() function that return valid email_id
 
   import re
   pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
   if re.match(pattern, receiver):
     server.sendmail(sender, receiver, message)  #sending email using server
     return np
+  else:
+    print('Invalid email address')
+    return None
+
+"""**Email Verification function. Returns valid email-id**"""
+def verify_email():
+  import re
+  pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+  email = input('Enter your email address to login:')
+  if re.match(pattern, email):
+    return email
   else:
     print('Invalid email address')
     return None
