@@ -33,24 +33,16 @@ def send_otp(np):  #function for sending email to the user
   body = f"Your OTP is {np}" #email body
   message = f"subject:{subject}\n\n{body}"  #encoding subject and body
   #receiver = input('Enter your email address to login:') #input for obtaining user email id
-  receiver = verify_email() #calling verify_email() function that return valid email_id
+  try:
+    receiver = verify_email() #calling verify_email() function that return valid email_id
+  except Exception as e:
+    print(f'error:{e}')
 
   import re
   pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
   if re.match(pattern, receiver):
     server.sendmail(sender, receiver, message)  #sending email using server
     return np
-  else:
-    print('Invalid email address')
-    return None
-
-"""**Email Verification function. Returns valid email-id**"""
-def verify_email():
-  import re
-  pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-  email = input('Enter your email address to login:')
-  if re.match(pattern, email):
-    return email
   else:
     print('Invalid email address')
     return None
@@ -63,11 +55,14 @@ def enter_otp():  #function to prompt the user to enter the otp
 
 """**converting otp to hashcode and verification**"""
 
+!pip install bcrypt  #installing bcrypt library
 import bcrypt  #importing bcrypt library
-
 def hash_otp(otp) -> bytes:  #function to convert otp to hashcode and mailing the code to the user
-  !pip install bcrypt  #installing bcrypt library
-  hashed = bcrypt.hashpw(otp.encode('utf-8'), bcrypt.gensalt())  #converting otp to hashcode
+
+  try:
+    hashed = bcrypt.hashpw(otp.encode('utf-8'), bcrypt.gensalt())  #converting otp to hashcode
+  except Exception as e:
+    print(f'error:{e}')
   #send_otp()  #calling send_otp
   return hashed  #returning hashcode
 
@@ -78,10 +73,25 @@ def verify_otp(enter_otp, hash_otp):
 
 """testing the code"""
 
-hashed = hash_otp(send_otp(otp_generator()))  #storing encoded password for verification
-for i in range(3):  #3 repetitions for entering otp
-  if verify_otp(enter_otp, hashed):
-    print('OTP Verified')
-    break
+try:
+  hashed = hash_otp(send_otp(otp_generator()))  #storing encoded password for verification
+  for i in range(3):  #3 repetitions for entering otp
+    if verify_otp(enter_otp, hashed):
+      print('OTP Verified')
+      break
+    else:
+      print('OTP Incorrect\nRetry')
+except Exception as e:
+  print(f'Error: {e}')
+
+"""**Email Verification function.** Returns valid email-id"""
+
+def verify_email():
+  import re
+  pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+  email = input('Enter your email address to login:')
+  if re.match(pattern, email):
+    return email
   else:
-    print('OTP Incorrect\nRetry')
+    print('Invalid email address')
+    return None
